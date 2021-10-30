@@ -102,10 +102,10 @@ struct TypedRow {
     message: &'static str,
     issuer_name: String,
     common_name: String,
-    name_values: String,
+    san: String,
     certificate_id: i64,
-    not_before: String,
     not_after: String,
+    not_before: String,
     sha256_fingerprint: String,
 }
 impl TryFrom<&SimpleQueryRow> for TypedRow {
@@ -121,9 +121,9 @@ impl TryFrom<&SimpleQueryRow> for TypedRow {
                 .try_get("common_name")?
                 .ok_or_else(|| format_err!("common_name was None"))?
                 .into(),
-            name_values: row
-                .try_get("name_values")?
-                .ok_or_else(|| format_err!("name_values was None"))?
+            san: row
+                .try_get("sans")?
+                .ok_or_else(|| format_err!("sans was None"))?
                 .into(),
             certificate_id: row
                 .try_get("certificate_id")?
@@ -157,16 +157,16 @@ Link: {link}
 Issuer: {issuer}
 CN: {cn}
 SAN: {san}
-NotBefore: {notbefore}
 NotAfter: {notafter}
+NotBefore: {notbefore}
 Fingerprint: {fingerprint}
 ",
                 link = format_args!("https://crt.sh/?id={}", self.certificate_id),
                 issuer = self.issuer_name,
                 cn = self.common_name,
-                san = self.name_values,
-                notbefore = self.not_before,
+                san = self.san,
                 notafter = self.not_after,
+                notbefore = self.not_before,
                 fingerprint = self.sha256_fingerprint,
             );
         }
