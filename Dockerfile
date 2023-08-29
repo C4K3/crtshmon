@@ -1,4 +1,4 @@
-FROM rust:1.56.0 AS build
+FROM rust:bookworm AS build
 
 RUN mkdir /build
 WORKDIR /build
@@ -6,7 +6,7 @@ COPY ./Cargo.toml ./Cargo.lock ./
 COPY ./src ./src
 RUN cargo build --release
 
-FROM debian:bullseye-slim
+FROM debian:bookworm-slim
 
 RUN apt-get update && apt-get install -y --no-install-recommends dumb-init ca-certificates && rm -rf /var/lib/apt/lists/*
 COPY --from=build /build/target/release/crtshmon /bin/crtshmon
